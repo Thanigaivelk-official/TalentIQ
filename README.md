@@ -32,7 +32,7 @@ TalentIQ is an enterprise-grade recruitment intelligence platform designed to el
 
 ### 1. Clone & Set Up Virtual Environment
 ```bash
-git clone https://github.com/your-org/TalentIQ.git
+git clone https://github.com/Thanigaivelk-official/TalentIQ.git
 cd TalentIQ
 python -m venv venv
 # On Windows:
@@ -50,6 +50,7 @@ pip install -r requirements.txt
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+python scripts/seed_demo.py
 ```
 
 ### 4. Launch Development Server
@@ -57,6 +58,23 @@ python manage.py migrate
 python manage.py runserver
 ```
 Visit `http://localhost:8000` to interact with the platform.
+
+---
+
+## 🔐 Demo Login Credentials
+
+For quick evaluation and testing across roles, use the following pre-configured credentials:
+
+| Role | Email | Password | Access & Permissions |
+| :--- | :--- | :--- | :--- |
+| **Organization Administrator** | `org.admin@talentiq.ai` | `TalentIQDemo2026!` | Full administrative access, manage organization team, add/edit recruiters, change recruiter emails, view audit logs. |
+| **Lead Technical Recruiter** | `thanigaivelk.official@gmail.com` | `TalentIQDemo2026!` | Post jobs, upload & batch screen resumes, view candidate rankings, generate interview questions, manage profile. |
+| **Demo Recruiter** | `thanigaivel.kannan@talentiq.ai` | `TalentIQDemo2026!` | Recruiter dashboard, candidate evaluation, skill gap breakdown, AI matching pipelines. |
+
+> **Note**: You can also seed additional sample jobs and candidate profiles at any time by running:
+> ```bash
+> python scripts/seed_demo.py
+> ```
 
 ---
 
