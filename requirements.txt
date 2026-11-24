@@ -1,0 +1,31 @@
+# Core Django & REST Framework
+Django>=5.1,<6.0
+djangorestframework>=3.15.0
+django-cors-headers>=4.3.0
+django-environ>=0.11.0
+
+# Database
+psycopg2-binary>=2.9.9
+
+# Document Processing
+PyMuPDF>=1.24.0
+python-docx>=1.1.0
+
+# NLP, AI & Machine Learning
+scikit-learn>=1.5.0
+spacy>=3.7.0
+numpy>=1.26.0
+pandas>=2.2.0
+
+# LLM Providers
+openai>=1.30.0
+
+# Utilities & Security
+pydantic>=2.7.0
+python-dotenv>=1.0.1
+requests>=2.31.0
+Pillow>=10.3.0
+
+# Testing
+pytest>=8.0.0
+pytest-django>=4.8.0

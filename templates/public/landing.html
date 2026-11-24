@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TalentIQ – AI-Powered Resume Screening & Candidate Ranking System{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION WITH CINEMATIC 3D NEURAL CORE -->
+<section id="hero" class="position-relative py-5 overflow-hidden">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-5">
+      <!-- Left Column: Value Proposition -->
+      <div class="col-lg-6 z-2 hero-text-content">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 glass-badge mb-3">
+          <span class="status-indicator"></span>
+          <span class="text-cyan small fw-semibold">Next-Gen Recruitment Intelligence</span>
+        </div>
+
+        <h1 class="display-3 fw-bold text-white mb-3 tracking-tight">
+          Smarter Hiring.<br>
+          <span class="text-cyan">Better Talent.</span><br>
+          Faster Decisions.
+        </h1>
+
+        <p class="lead text-secondary-light mb-4 fs-5 text-pretty" style="max-width: 540px;">
+          Empower human hiring teams with autonomous resume screening, multi-variable matching intelligence, and contextual interview insights—completely eliminating protected attribute bias.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3 mb-5">
+          <a href="{% url 'register' %}" class="btn btn-talent-primary px-4 py-3 fs-6">
+            <span>Start Free Trial</span>
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+          </a>
+          <a href="{% url 'login' %}" class="btn btn-talent-secondary px-4 py-3 fs-6">
+            <i data-lucide="lock" style="width: 18px; height: 18px;"></i>
+            <span>Recruiter Console</span>
+          </a>
+        </div>
+        
+        <!-- Live Trust Indicators -->
+        <div class="row g-3 pt-3 border-top border-secondary text-secondary-light small">
+          <div class="col-4">
+            <div class="fw-bold text-white fs-6">100%</div>
+            <div>Auditable Scoring</div>
+          </div>
+          <div class="col-4">
+            <div class="fw-bold text-white fs-6">Zero</div>
+            <div>Demographic Bias</div>
+          </div>
+          <div class="col-4">
+            <div class="fw-bold text-white fs-6">10x</div>
+            <div>Screening Velocity</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Interactive 3D Canvas Scene & Floating HUD Panels -->
+      <div class="col-lg-6 position-relative hero-3d-wrapper">
+        <div class="hero-scene-wrapper">
+          <div id="hero-3d-canvas"></div>
+
+          <!-- Glassmorphism Live Analysis HUD Overlay -->
+          <div class="floating-3d-hud hud-top-right">
+            <div class="hud-card">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <i data-lucide="check-circle-2" class="text-success" style="width: 16px; height: 16px;"></i>
+                <span class="text-white small fw-bold">Active Ingestion</span>
+              </div>
+              <div class="text-secondary-light small font-monospace">48 Resumes / min</div>
+            </div>
+          </div>
+
+          <div class="floating-3d-hud hud-bottom-left">
+            <div class="hud-card">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <i data-lucide="shield-check" class="text-cyan" style="width: 16px; height: 16px;"></i>
+                <span class="text-white small fw-bold">Protected Data Scrubbed</span>
+              </div>
+              <div class="text-secondary-light small font-monospace">Zero Bias Verified</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3D RECRUITMENT WORKFLOW VISUALIZATION -->
+<section id="workflow" class="py-5 container position-relative">
+  <div class="text-center mx-auto mb-5" style="max-width: 680px;">
+    <div class="badge-skill mb-2">Neural Pipeline Flow</div>
+    <h2 class="display-5 fw-bold text-white mb-3">How TalentIQ Transforms Raw Documents</h2>
+    <p class="text-secondary-light fs-6 text-pretty mb-0">A deterministic, multi-stage intelligence workflow transforming unformatted PDFs and Word documents into explainable hiring recommendations.</p>
+  </div>
+
+  <div class="row g-4 pipeline-cards-grid align-items-stretch">
+    <div class="col-md-6 col-lg-3">
+      <div class="pipeline-step-card h-100">
+        <span class="step-indicator">STAGE 01</span>
+        <div class="card-title-flow">
+          <i data-lucide="file-up" class="text-cyan" style="width: 22px; height: 22px;"></i>
+          <h3 class="fs-5 text-white fw-bold">Multi-Format Ingestion</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty">High-speed streaming text extraction across PDF and DOCX files with automated SHA-256 deduplication and secure file sandboxing.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="pipeline-step-card h-100">
+        <span class="step-indicator">STAGE 02</span>
+        <div class="card-title-flow">
+          <i data-lucide="cpu" class="text-cyan" style="width: 22px; height: 22px;"></i>
+          <h3 class="fs-5 text-white fw-bold">NLP Entity Extraction</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty">Custom NLP taxonomy parses technical competencies, seniority tenure, project scopes, education credentials, and contact details.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="pipeline-step-card h-100">
+        <span class="step-indicator">STAGE 03</span>
+        <div class="card-title-flow">
+          <i data-lucide="git-merge" class="text-cyan" style="width: 22px; height: 22px;"></i>
+          <h3 class="fs-5 text-white fw-bold">Weighted Scoring Engine</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty">Transparent matching calculating technical match (45%), experience (25%), projects (15%), and semantic alignment without demographic bias.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+      <div class="pipeline-step-card h-100">
+        <span class="step-indicator">STAGE 04</span>
+        <div class="card-title-flow">
+          <i data-lucide="help-circle" class="text-cyan" style="width: 22px; height: 22px;"></i>
+          <h3 class="fs-5 text-white fw-bold">Contextual Interview AI</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty">Automated generation of targeted technical coding and scenario questions addressing confirmed competencies and exact skill gaps.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANIMATED IMPACT COUNTERS -->
+<section id="metrics" class="py-5 border-top border-bottom border-secondary position-relative">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-6 col-md-3">
+        <div class="counter-box">
+          <div class="counter-value" data-target="93">0%</div>
+          <h3 class="fs-6 text-white fw-semibold mb-1">Screening Time Reduction</h3>
+          <div class="text-secondary-light small">From hours to minutes per batch</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="counter-box">
+          <div class="counter-value" data-target="100">0%</div>
+          <h3 class="fs-6 text-white fw-semibold mb-1">Explainable Scoring</h3>
+          <div class="text-secondary-light small">Zero opaque black-box verdicts</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="counter-box">
+          <div class="counter-value" data-target="4">0x</div>
+          <h3 class="fs-6 text-white fw-semibold mb-1">Qualified Candidate Flow</h3>
+          <div class="text-secondary-light small">Higher onsite interview conversion</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="counter-box">
+          <div class="counter-value" data-target="0">0%</div>
+          <h3 class="fs-6 text-white fw-semibold mb-1">Demographic Bias Used</h3>
+          <div class="text-secondary-light small">Protected attribute isolation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORE PLATFORM INTELLIGENCE FEATURES -->
+<section id="features" class="py-5 container">
+  <div class="text-center max-w-700 mx-auto mb-5">
+    <div class="badge-skill mb-2">Enterprise Capabilities</div>
+    <h2 class="display-5 fw-bold text-white mb-3">Architected for High-Scale Hiring Teams</h2>
+    <p class="text-secondary-light fs-6 text-pretty">Everything you need to source, evaluate, and interview premier technical talent with confidence.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="card-title-flow">
+          <i data-lucide="layers" class="text-cyan" style="width: 24px; height: 24px;"></i>
+          <h3 class="fs-5 text-white fw-bold mb-0">Multi-Tenancy &amp; Isolation</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty mb-0">Strict organization-level data boundaries, encrypted resume storage, and granular role permissions including Administrator and Recruiter tiers.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="card-title-flow">
+          <i data-lucide="sliders" class="text-cyan" style="width: 24px; height: 24px;"></i>
+          <h3 class="fs-5 text-white fw-bold mb-0">Configurable Scoring Models</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty mb-0">Adjust criteria weighting on a per-role basis to emphasize hands-on coding, architecture experience, or project portfolio depth.</p>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="card-title-flow">
+          <i data-lucide="sparkles" class="text-cyan" style="width: 24px; height: 24px;"></i>
+          <h3 class="fs-5 text-white fw-bold mb-0">Provider Abstraction Layer</h3>
+        </div>
+        <p class="text-secondary-light small text-pretty mb-0">Seamless integration with OpenAI models and a fully deterministic offline fallback engine that operates when API keys are absent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HIGH CONVERTING ENTERPRISE CTA -->
+<section class="py-5 container mb-5">
+  <div class="cta-enterprise-card text-center position-relative">
+    <div class="z-2 position-relative">
+      <div class="badge-skill mb-3">Get Started Today</div>
+      <h2 class="display-4 fw-bold text-white mb-3 tracking-tight">
+        Elevate Your Hiring Intelligence.
+      </h2>
+      <p class="lead text-secondary-light mb-4 mx-auto text-pretty" style="max-width: 600px;">
+        Join forward-thinking engineering and recruiting leaders using TalentIQ to uncover top talent faster and fairer.
+      </p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'register' %}" class="btn btn-talent-primary px-5 py-3 fs-6">
+          <span>Create Enterprise Account</span>
+          <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="{% url 'login' %}" class="btn btn-talent-secondary px-4 py-3 fs-6">
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/talentiq_3d.js' %}"></script>
+<script>
+  // GSAP Smooth ScrollTriggers & Animated KPI Counters
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Hero text entrance
+      gsap.from('.hero-text-content', {
+        opacity: 0,
+        y: 40,
+        duration: 1.1,
+        ease: 'power3.out'
+      });
+
+      // Pipeline cards staggered entrance
+      gsap.from('.pipeline-step-card', {
+        scrollTrigger: {
+          trigger: '.pipeline-cards-grid',
+          start: 'top 80%'
+        },
+        opacity: 0,
+        y: 50,
+        stagger: 0.15,
+        duration: 0.9,
+        ease: 'power2.out'
+      });
+
+      // KPI Counter Animation
+      const counterBoxes = document.querySelectorAll('.counter-box');
+      counterBoxes.forEach(box => {
+        const valElem = box.querySelector('.counter-value');
+        const target = parseInt(valElem.getAttribute('data-target'), 10);
+        const suffix = valElem.textContent.replace(/[0-9]/g, '');
+
+        ScrollTrigger.create({
+          trigger: box,
+          start: 'top 85%',
+          once: true,
+          onEnter: () => {
+            let current = 0;
+            const duration = 1500;
+            const stepTime = 30;
+            const step = Math.max(1, Math.ceil(target / (duration / stepTime)));
+            const timer = setInterval(() => {
+              current += step;
+              if (current >= target) {
+                current = target;
+                clearInterval(timer);
+              }
+              valElem.textContent = current + suffix;
+            }, stepTime);
+          }
+        });
+      });
+    }
+  });
+</script>
+{% endblock %}

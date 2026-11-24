@@ -1,0 +1,275 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}TalentIQ – AI-Powered Resume Screening & Candidate Ranking{% endblock %}</title>
+  
+  <!-- High-end Typography (Bespoke Syne / Cabinet Grotesk / DM Sans aesthetic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Three.js, GSAP & ScrollTrigger, Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom TalentIQ Theme -->
+  <link rel="stylesheet" href="{% static 'css/talentiq.css' %}?v=2.3">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-talentiq">
+
+  <!-- Floating Glassmorphic Enterprise Navbar -->
+  <header class="navbar-talentiq-wrapper">
+    <nav class="navbar navbar-expand-lg navbar-talentiq">
+      <div class="container-fluid px-2 px-md-3">
+        <a class="navbar-brand d-flex align-items-center gap-2 text-white fw-bold tracking-tight me-lg-4" href="{% url 'landing' %}">
+          <div class="brand-logo-icon">
+            <i data-lucide="cpu" class="text-cyan" style="width: 20px; height: 20px;"></i>
+          </div>
+          <span class="fs-4 brand-text">Talent<span class="brand-accent">IQ</span></span>
+        </a>
+        
+        <button class="navbar-toggler border-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-label="Toggle navigation">
+          <i data-lucide="menu" class="text-white"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navContent">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
+            {% if not user.is_authenticated %}
+              <!-- Public Navigation Links -->
+              <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="{% url 'landing' %}#hero">
+                  <i data-lucide="compass" style="width: 15px; height: 15px;"></i>
+                  <span>Overview</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="{% url 'landing' %}#workflow">
+                  <i data-lucide="git-branch" style="width: 15px; height: 15px;"></i>
+                  <span>Pipeline</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="{% url 'landing' %}#features">
+                  <i data-lucide="sparkles" style="width: 15px; height: 15px;"></i>
+                  <span>Intelligence</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="{% url 'landing' %}#metrics">
+                  <i data-lucide="trending-up" style="width: 15px; height: 15px;"></i>
+                  <span>Impact</span>
+                </a>
+              </li>
+            {% else %}
+              <!-- Recruiter & Admin Authenticated Navigation with Dropdowns -->
+              <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="{% url 'dashboard' %}">
+                  <i data-lucide="layout-dashboard" style="width: 15px; height: 15px;"></i>
+                  <span>Dashboard</span>
+                </a>
+              </li>
+
+              <!-- Dropdown 1: Platform (Pipeline & Intelligence) -->
+              <li class="nav-item dropdown">
+                <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="platformDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i data-lucide="cpu" style="width: 15px; height: 15px;"></i>
+                  <span>Platform AI</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark glass-card shadow-lg border-secondary py-2" aria-labelledby="platformDropdown">
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-secondary-light hover-cyan" href="{% url 'landing' %}#workflow">
+                      <i data-lucide="git-branch" class="text-cyan" style="width: 16px; height: 16px;"></i>
+                      <div>
+                        <div class="fw-semibold text-white">Pipeline Flow</div>
+                        <div class="small text-secondary-light">Document processing &amp; stages</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider border-secondary my-1"></li>
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-secondary-light hover-cyan" href="{% url 'landing' %}#features">
+                      <i data-lucide="sparkles" class="text-cyan" style="width: 16px; height: 16px;"></i>
+                      <div>
+                        <div class="fw-semibold text-white">AI Intelligence</div>
+                        <div class="small text-secondary-light">Matching engine &amp; explainability</div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- Dropdown 2: Recruitment (Jobs & Screen Resumes) -->
+              <li class="nav-item dropdown">
+                <a class="nav-link nav-link-modern dropdown-toggle" href="#" id="recruitmentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i data-lucide="briefcase" style="width: 15px; height: 15px;"></i>
+                  <span>Recruitment</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark glass-card shadow-lg border-secondary py-2" aria-labelledby="recruitmentDropdown">
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-secondary-light hover-cyan" href="{% url 'job_list' %}">
+                      <i data-lucide="file-text" class="text-cyan" style="width: 16px; height: 16px;"></i>
+                      <div>
+                        <div class="fw-semibold text-white">Job Requisitions</div>
+                        <div class="small text-secondary-light">Openings &amp; candidate queues</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-secondary-light hover-cyan" href="{% url 'job_create' %}">
+                      <i data-lucide="plus-circle" class="text-cyan" style="width: 16px; height: 16px;"></i>
+                      <div>
+                        <div class="fw-semibold text-white">Create Job Opening</div>
+                        <div class="small text-secondary-light">Define requirements &amp; criteria</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider border-secondary my-1"></li>
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-secondary-light hover-cyan" href="{% url 'resume_upload' %}">
+                      <i data-lucide="upload-cloud" class="text-cyan" style="width: 16px; height: 16px;"></i>
+                      <div>
+                        <div class="fw-semibold text-white">Screen Resumes</div>
+                        <div class="small text-secondary-light">Upload PDF / DOCX candidate files</div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link nav-link-modern" href="{% url 'analytics' %}">
+                  <i data-lucide="bar-chart-3" style="width: 15px; height: 15px;"></i>
+                  <span>Analytics</span>
+                </a>
+              </li>
+
+              {% if user.role == 'ORG_ADMIN' or user.role == 'SUPER_ADMIN' or user.is_staff %}
+                <li class="nav-item">
+                  <a class="nav-link nav-link-modern text-cyan" href="{% url 'org_recruiters' %}">
+                    <i data-lucide="users" style="width: 15px; height: 15px;"></i>
+                    <span>Team</span>
+                    <span class="nav-pill-badge">Admin</span>
+                  </a>
+                </li>
+              {% endif %}
+            {% endif %}
+          </ul>
+
+          <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+            {% if user.is_authenticated %}
+              <a href="{% url 'recruiter_profile' %}" class="d-flex align-items-center gap-2 user-profile-badge text-decoration-none hover-cyan">
+                {% if user.recruiter_profile.avatar %}
+                  <img src="{{ user.recruiter_profile.avatar.url }}" alt="Avatar" class="rounded-circle object-fit-cover" style="width: 24px; height: 24px;">
+                {% else %}
+                  <span class="status-indicator"></span>
+                {% endif %}
+                <span class="text-white small fw-medium">{{ user.first_name|default:user.email }}</span>
+                <i data-lucide="chevron-right" style="width: 13px; height: 13px;" class="text-secondary-light"></i>
+              </a>
+              <a href="{% url 'logout' %}" class="btn btn-talent-secondary btn-sm px-3" title="Sign Out">
+                <i data-lucide="log-out" style="width: 15px; height: 15px;"></i>
+              </a>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn btn-talent-ghost btn-sm px-3">Sign In</a>
+              <a href="{% url 'register' %}" class="btn btn-talent-primary btn-sm px-3">
+                <span>Start Free Trial</span>
+                <i data-lucide="arrow-right" style="width: 15px; height: 15px;"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Flash Messages -->
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show glass-panel text-white" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content Body -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Modern Enterprise SaaS Footer -->
+  <footer class="footer-talentiq border-top border-secondary mt-5 py-5 text-secondary-light">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+          <div class="d-flex align-items-center gap-2 text-white fw-bold mb-3">
+            <i data-lucide="cpu" class="text-cyan"></i>
+            <span class="fs-5">Talent<span class="brand-accent">IQ</span></span>
+          </div>
+          <p class="small text-secondary-light mb-3">
+            Autonomous recruitment intelligence infrastructure. Transforming high-volume technical screening with auditable multi-dimensional candidate evaluation.
+          </p>
+          <div class="d-flex gap-2">
+            <span class="badge-skill">Enterprise Ready</span>
+            <span class="badge-skill">SOC2 Compliant</span>
+            <span class="badge-skill">Unbiased AI</span>
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-2 offset-lg-2">
+          <h3 class="fs-6 text-white fw-semibold mb-3">Product</h3>
+          <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+            <li><a href="{% url 'landing' %}#workflow" class="text-secondary-light text-decoration-none hover-cyan">Pipeline</a></li>
+            <li><a href="{% url 'landing' %}#features" class="text-secondary-light text-decoration-none hover-cyan">Matching Engine</a></li>
+            <li><a href="{% url 'landing' %}#metrics" class="text-secondary-light text-decoration-none hover-cyan">Analytics & ROI</a></li>
+            <li><a href="{% url 'login' %}" class="text-secondary-light text-decoration-none hover-cyan">Security & Audit</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <h3 class="fs-6 text-white fw-semibold mb-3">Platform</h3>
+          <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+            <li><a href="{% url 'job_list' %}" class="text-secondary-light text-decoration-none hover-cyan">Job Management</a></li>
+            <li><a href="{% url 'resume_upload' %}" class="text-secondary-light text-decoration-none hover-cyan">Document Parser</a></li>
+            <li><a href="{% url 'analytics' %}" class="text-secondary-light text-decoration-none hover-cyan">Pipeline Visuals</a></li>
+            <li><a href="{% url 'register' %}" class="text-secondary-light text-decoration-none hover-cyan">Create Account</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2">
+          <h3 class="fs-6 text-white fw-semibold mb-3">Compliance</h3>
+          <div class="small text-secondary-light">
+            <p class="mb-2">Zero protected demographic bias algorithm.</p>
+            <p class="text-secondary-light small mb-0">&copy; 2026 TalentIQ Inc. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-top border-secondary pt-4 text-center small text-secondary-light">
+        <p class="mb-0">TalentIQ – AI-Powered Resume Screening & Candidate Ranking System &bull; Smarter Hiring. Better Talent. Faster Decisions.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

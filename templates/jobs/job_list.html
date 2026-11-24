@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Job Requisitions – TalentIQ{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+  <!-- Header / Action bar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="status-indicator"></span>
+        <span class="text-cyan small fw-semibold text-uppercase tracking-wider">Talent Acquisition</span>
+      </div>
+      <h1 class="h3 text-white fw-bold mb-1">Active Job Requisitions</h1>
+      <p class="text-secondary-light small mb-0">Manage technical criteria, experience benchmarks, and evaluate active candidate pipelines</p>
+    </div>
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+      <a href="{% url 'job_create' %}" class="btn btn-talent-primary btn-sm px-3">
+        <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+        <span>Create Job Requisition</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    {% for job in jobs %}
+      <div class="col-md-6 col-xl-4">
+        <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-dark border border-secondary text-cyan font-monospace px-2 py-1">
+                {{ job.get_employment_type_display }}
+              </span>
+              <span class="text-secondary-light small d-flex align-items-center gap-1">
+                <i data-lucide="map-pin" class="text-cyan" style="width: 14px; height: 14px;"></i>
+                <span>{{ job.location }}</span>
+              </span>
+            </div>
+
+            <h2 class="h5 text-white fw-bold mb-1">{{ job.title }}</h2>
+            <p class="text-secondary-light small mb-3">
+              {{ job.department }} &bull; Min <span class="font-monospace text-white">{{ job.min_years_experience }} yrs</span>
+            </p>
+            
+            <div class="mb-3">
+              <div class="text-secondary-light small fw-medium mb-1">Required Criteria:</div>
+              <div class="d-flex flex-wrap gap-1">
+                {% for skill in job.required_skills.all %}
+                  <span class="badge-skill">{{ skill.name }}</span>
+                {% empty %}
+                  <span class="text-secondary-light small">No criteria specified</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="border-top border-secondary pt-3 d-flex justify-content-between align-items-center mt-3">
+            <div class="small">
+              <span class="text-secondary-light">Applicants:</span>
+              <strong class="text-white font-monospace ms-1">{{ job.analyses.count }}</strong>
+            </div>
+            <div class="d-flex gap-2">
+              <a href="{% url 'candidate_ranking' job.id %}" class="btn btn-talent-primary btn-sm py-1 px-3">
+                <span>Rankings</span>
+                <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="glass-card p-5 mx-auto" style="max-width: 540px;">
+          <div class="rounded-circle bg-dark border border-secondary d-inline-flex p-3 mb-3 text-cyan">
+            <i data-lucide="briefcase" style="width: 44px; height: 44px;"></i>
+          </div>
+          <h2 class="h4 text-white fw-bold mb-2">No Active Job Requisitions Found</h2>
+          <p class="text-secondary-light small mb-4">Create your first technical job requisition to start automated screening and candidate match scoring.</p>
+          <a href="{% url 'job_create' %}" class="btn btn-talent-primary px-4">
+            <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+            <span>Create First Job Opening</span>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

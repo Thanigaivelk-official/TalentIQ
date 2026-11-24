@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Role Interview Questions – {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <a href="{% url 'candidate_ranking' job.id %}" class="text-secondary small text-decoration-none">&larr; Back to Rankings</a>
+      <h3 class="text-white fw-bold mb-1 mt-1">Generated Interview Questions</h3>
+      <p class="text-secondary small mb-0">{{ job.title }} &bull; Role-specific & candidate-gap targeted</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    {% for q in questions %}
+      <div class="col-12">
+        <div class="glass-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25">{{ q.category }} &bull; {{ q.difficulty }}</span>
+            <span class="text-secondary small">Target: <strong class="text-white">{{ q.targeted_skill_or_gap }}</strong></span>
+          </div>
+
+          <h5 class="text-white mb-3">{{ q.question }}</h5>
+
+          <div class="bg-dark p-3 rounded border border-secondary">
+            <div class="text-secondary small fw-semibold mb-1">Expected Evaluation Guide:</div>
+            <div class="text-secondary small">{{ q.expected_answer_guide }}</div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5 text-secondary">
+        No questions generated yet.
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

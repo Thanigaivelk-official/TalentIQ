@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: talentiq_postgres
+    environment:
+      POSTGRES_DB: talentiq_db
+      POSTGRES_USER: talentiq_user
+      POSTGRES_PASSWORD: talentiq_secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: talentiq_redis
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    container_name: talentiq_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=production-ready-docker-talentiq-secret-key-2026
+      - DATABASE_URL=postgres://talentiq_user:talentiq_secure_password@db:5432/talentiq_db
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:

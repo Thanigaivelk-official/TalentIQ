@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Resumes – TalentIQ{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Breadcrumb Header -->
+      <div class="mb-3">
+        <a href="{% url 'dashboard' %}" class="text-secondary-light small text-decoration-none hover-cyan">&larr; Back to Dashboard</a>
+      </div>
+
+      <div class="glass-card p-4 p-md-5">
+        <div class="card-title-flow mb-2">
+          <i data-lucide="upload-cloud" class="text-cyan" style="width: 24px; height: 24px;"></i>
+          <h1 class="h4 text-white fw-bold mb-0">Upload Candidate Resumes</h1>
+        </div>
+        <p class="text-secondary-light small mb-4">Ingest PDF or Word documents for automated skill parsing, experience verification, and job match scoring.</p>
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'resume_upload' %}" id="uploadResumeForm">
+          {% csrf_token %}
+          
+          <div class="mb-4">
+            <label class="form-label text-secondary-light small fw-medium" for="jobSelect">Associate with Job Opening (Optional)</label>
+            <select id="jobSelect" name="job_id" class="form-select">
+              <option value="">-- General Screening (No specific job attached) --</option>
+              {% for job in jobs %}
+                <option value="{{ job.id }}" {% if request.GET.job_id == job.id|stringformat:"s" %}selected{% endif %}>
+                  {{ job.title }} ({{ job.department }} &bull; {{ job.location }})
+                </option>
+              {% endfor %}
+            </select>
+            <div class="form-text text-secondary-light small">Selecting an opening automatically ranks candidates against the role's weighted scoring criteria.</div>
+          </div>
+
+          <!-- Drag and Drop Upload Zone -->
+          <div class="border border-secondary rounded-3 p-5 text-center mb-4 bg-dark position-relative drop-zone" id="dropZone" style="border-style: dashed !important; transition: all 0.2s ease;">
+            <i data-lucide="file-up" class="text-cyan mb-3" style="width: 44px; height: 44px;"></i>
+            <h2 class="h5 text-white fw-bold mb-1">Choose Files or Drag &amp; Drop Here</h2>
+            <p class="text-secondary-light small mb-3">Accepts PDF, DOCX (Up to 10MB per file &bull; Multi-file upload supported)</p>
+            
+            <input type="file" id="resumeFileInput" name="resume_files" multiple class="form-control visually-hidden" required accept=".pdf,.docx,.doc">
+            
+            <button type="button" class="btn btn-talent-secondary btn-sm px-4" id="browseFilesBtn">
+              <i data-lucide="folder-open" style="width: 16px; height: 16px;"></i>
+              <span>Browse Documents</span>
+            </button>
+
+            <!-- File List Preview Container -->
+            <div id="selectedFilesList" class="mt-4 text-start d-none">
+              <h3 class="fs-6 text-white fw-semibold mb-2">Selected Documents:</h3>
+              <div class="list-group list-group-flush border border-secondary rounded" id="fileListItems"></div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+            <a href="{% url 'dashboard' %}" class="btn btn-talent-secondary">Cancel</a>
+            <button type="submit" class="btn btn-talent-primary px-4" id="submitUploadBtn">
+              <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+              <span id="submitBtnText">Process &amp; Analyze Resumes</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('resumeFileInput');
+    const browseBtn = document.getElementById('browseFilesBtn');
+    const selectedFilesList = document.getElementById('selectedFilesList');
+    const fileListItems = document.getElementById('fileListItems');
+    const uploadForm = document.getElementById('uploadResumeForm');
+    const submitBtn = document.getElementById('submitUploadBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
+
+    browseBtn.addEventListener('click', () => fileInput.click());
+
+    // Highlight drop zone on drag over
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#38BDF8';
+        dropZone.style.backgroundColor = 'rgba(56, 189, 248, 0.05)';
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#1E2D4A';
+        dropZone.style.backgroundColor = '#070B16';
+      });
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        renderFileList(fileInput.files);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      renderFileList(fileInput.files);
+    });
+
+    function renderFileList(files) {
+      if (files.length === 0) {
+        selectedFilesList.classList.add('d-none');
+        return;
+      }
+      fileListItems.innerHTML = '';
+      Array.from(files).forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center py-2 px-3 small';
+        const sizeKb = (file.size / 1024).toFixed(1);
+        item.innerHTML = `
+          <div class="d-flex align-items-center gap-2 text-truncate">
+            <i data-lucide="file-text" class="text-cyan" style="width: 16px; height: 16px;"></i>
+            <span class="text-truncate">${file.name}</span>
+          </div>
+          <span class="font-monospace text-secondary-light">${sizeKb} KB</span>
+        `;
+        fileListItems.appendChild(item);
+      });
+      selectedFilesList.classList.remove('d-none');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Processing animation feedback on submit
+    uploadForm.addEventListener('submit', function () {
+      submitBtn.disabled = true;
+      submitBtnText.textContent = 'Parsing & Evaluating...';
+      const icon = submitBtn.querySelector('i, svg');
+      if (icon) icon.classList.add('spin-animation');
+    });
+  });
+</script>
+<style>
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .spin-animation { animation: spin 1s linear infinite; }
+</style>
+{% endblock %}

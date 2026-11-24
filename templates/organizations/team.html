@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}Enterprise Team Management – TalentIQ{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+  <!-- Header / Top Bar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="status-indicator"></span>
+        <span class="text-cyan small fw-semibold text-uppercase tracking-wider">Enterprise Administration</span>
+      </div>
+      <h1 class="h3 text-white fw-bold mb-1">Organization Team &amp; Recruiter Management</h1>
+      <p class="text-secondary-light small mb-0">
+        Organization: <strong class="text-white">{{ org.name }}</strong> &bull; Manage recruiter accounts, permissions, and departmental assignments
+      </p>
+    </div>
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+      <button type="button" class="btn btn-talent-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#addRecruiterModal">
+        <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
+        <span>Add Recruiter</span>
+      </button>
+      <a href="{% url 'dashboard' %}" class="btn btn-talent-secondary btn-sm px-3">
+        <i data-lucide="layout-dashboard" style="width: 16px; height: 16px;"></i>
+        <span>Dashboard</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recruiters Table Card -->
+  <div class="glass-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="card-title-flow mb-0">
+        <i data-lucide="users" class="text-cyan" style="width: 20px; height: 20px;"></i>
+        <h2 class="h5 text-white fw-bold mb-0">Active Enterprise Recruiters ({{ team_members.count }})</h2>
+      </div>
+      <span class="text-secondary-light small">Role-Based Access Control Active</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover border-secondary align-middle mb-0">
+        <thead class="text-secondary-light small border-bottom border-secondary">
+          <tr>
+            <th scope="col" class="py-3">Recruiter Profile</th>
+            <th scope="col" class="py-3">Organization</th>
+            <th scope="col" class="py-3">Department</th>
+            <th scope="col" class="py-3">Role</th>
+            <th scope="col" class="py-3">Status</th>
+            <th scope="col" class="py-3">Joined Date</th>
+            <th scope="col" class="py-3 text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for member in team_members %}
+            <tr>
+              <td class="py-3">
+                <div class="d-flex align-items-center gap-3">
+                  {% if member.recruiter_profile.avatar %}
+                    <img src="{{ member.recruiter_profile.avatar.url }}" alt="{{ member.get_full_name }}" class="rounded-circle object-fit-cover border border-secondary" style="width: 36px; height: 36px;">
+                  {% else %}
+                    <div class="rounded-circle bg-dark border border-secondary d-flex align-items-center justify-content-center text-cyan" style="width: 36px; height: 36px;">
+                      <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                    </div>
+                  {% endif %}
+                  <div>
+                    <div class="fw-semibold text-white">{{ member.get_full_name|default:member.email }}</div>
+                    <div class="text-secondary-light small">{{ member.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-secondary-light small py-3">
+                <span class="text-white fw-medium">{{ member.organization.name|default:"Global Platform" }}</span>
+              </td>
+              <td class="text-secondary-light small py-3">
+                <div class="text-white">{{ member.recruiter_profile.title|default:"Technical Recruiter" }}</div>
+                <div class="text-secondary-light">{{ member.recruiter_profile.department|default:"Human Resources" }}</div>
+              </td>
+              <td class="py-3">
+                <span class="badge bg-dark border border-secondary text-cyan font-monospace px-2 py-1">
+                  {{ member.get_role_display }}
+                </span>
+              </td>
+              <td class="py-3">
+                {% if member.is_active %}
+                  <span class="text-success small d-flex align-items-center gap-1">
+                    <span class="status-indicator"></span> Active
+                  </span>
+                {% else %}
+                  <span class="text-danger small">&bull; Inactive</span>
+                {% endif %}
+              </td>
+              <td class="text-secondary-light small py-3 font-monospace">
+                {{ member.date_joined|date:"M d, Y" }}
+              </td>
+              <td class="text-end py-3">
+                <button type="button" class="btn btn-talent-secondary btn-sm py-1 px-3 edit-recruiter-btn" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#editRecruiterModal"
+                  data-user-id="{{ member.id }}"
+                  data-first-name="{{ member.first_name }}"
+                  data-last-name="{{ member.last_name }}"
+                  data-email="{{ member.email }}"
+                  data-role="{{ member.role }}"
+                  data-title="{{ member.recruiter_profile.title|default:'' }}"
+                  data-department="{{ member.recruiter_profile.department|default:'' }}"
+                  data-bio="{{ member.recruiter_profile.bio|default:'' }}">
+                  <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                  <span>Edit</span>
+                </button>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-5 text-secondary-light">
+                No recruiter accounts added yet. Click "Add Recruiter" to provision a team member.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 1: Add Recruiter -->
+<div class="modal fade" id="addRecruiterModal" tabindex="-1" aria-labelledby="addRecruiterLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-card border-secondary text-white">
+      <div class="modal-header border-secondary">
+        <div class="card-title-flow mb-0">
+          <i data-lucide="user-plus" class="text-cyan" style="width: 20px; height: 20px;"></i>
+          <h2 class="h5 text-white fw-bold mb-0" id="addRecruiterLabel">Add Recruiter to Organization</h2>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'org_recruiters' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add">
+        <div class="modal-body">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="addFirstName">First Name *</label>
+              <input type="text" id="addFirstName" name="first_name" class="form-control" required placeholder="Elena">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="addLastName">Last Name *</label>
+              <input type="text" id="addLastName" name="last_name" class="form-control" required placeholder="Rostova">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="addEmail">Work Email *</label>
+            <input type="email" id="addEmail" name="email" class="form-control" required placeholder="elena@apextech.io">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="addPassword">Temporary Password *</label>
+            <input type="password" id="addPassword" name="password" class="form-control" required minlength="8" placeholder="Minimum 8 characters">
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="addTitle">Job Title</label>
+              <input type="text" id="addTitle" name="title" class="form-control" placeholder="Senior Talent Scout">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="addDepartment">Department</label>
+              <input type="text" id="addDepartment" name="department" class="form-control" placeholder="Engineering Recruitment">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="addRole">Role Level</label>
+            <select id="addRole" name="role" class="form-select">
+              <option value="RECRUITER">Standard Recruiter</option>
+              <option value="ORG_ADMIN">Organization Administrator</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-talent-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-talent-primary">
+            <i data-lucide="check" style="width: 16px; height: 16px;"></i>
+            <span>Provision Recruiter</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Edit Recruiter -->
+<div class="modal fade" id="editRecruiterModal" tabindex="-1" aria-labelledby="editRecruiterLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-card border-secondary text-white">
+      <div class="modal-header border-secondary">
+        <div class="card-title-flow mb-0">
+          <i data-lucide="edit-3" class="text-cyan" style="width: 20px; height: 20px;"></i>
+          <h2 class="h5 text-white fw-bold mb-0" id="editRecruiterLabel">Edit Recruiter Details</h2>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'org_recruiters' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="edit">
+        <input type="hidden" id="editUserId" name="user_id">
+        <div class="modal-body">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="editFirstName">First Name *</label>
+              <input type="text" id="editFirstName" name="first_name" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="editLastName">Last Name *</label>
+              <input type="text" id="editLastName" name="last_name" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="editEmail">Work Email Address *</label>
+            <input type="email" id="editEmail" name="email" class="form-control" required autocomplete="email">
+            <div class="form-text text-secondary-light small">Enterprise Administrator privilege: update or reassign recruiter login email.</div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="editTitle">Job Title</label>
+              <input type="text" id="editTitle" name="title" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="editDepartment">Department</label>
+              <input type="text" id="editDepartment" name="department" class="form-control">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="editRole">Role Level</label>
+            <select id="editRole" name="role" class="form-select">
+              <option value="RECRUITER">Standard Recruiter</option>
+              <option value="ORG_ADMIN">Organization Administrator</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="editPassword">Reset Password (Optional)</label>
+            <input type="password" id="editPassword" name="new_password" class="form-control" minlength="8" placeholder="Leave blank to keep current password">
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-talent-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-talent-primary">
+            <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const editButtons = document.querySelectorAll('.edit-recruiter-btn');
+    editButtons.forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.getElementById('editUserId').value = this.getAttribute('data-user-id');
+        document.getElementById('editFirstName').value = this.getAttribute('data-first-name');
+        document.getElementById('editLastName').value = this.getAttribute('data-last-name');
+        document.getElementById('editEmail').value = this.getAttribute('data-email');
+        document.getElementById('editTitle').value = this.getAttribute('data-title');
+        document.getElementById('editDepartment').value = this.getAttribute('data-department');
+        document.getElementById('editRole').value = this.getAttribute('data-role');
+        document.getElementById('editPassword').value = '';
+      });
+    });
+  });
+</script>
+{% endblock %}

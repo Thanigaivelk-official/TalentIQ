@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Recruitment Analytics & Insights – TalentIQ{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+  <!-- Header / Breadcrumb -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <span class="status-indicator"></span>
+        <span class="text-cyan small fw-semibold text-uppercase tracking-wider">Enterprise Intelligence</span>
+      </div>
+      <h1 class="h3 text-white fw-bold mb-1">Recruitment Analytics &amp; Talent Pipeline Insights</h1>
+      <p class="text-secondary-light small mb-0">Platform throughput, skill distributions, and candidate evaluation trajectories</p>
+    </div>
+    <div class="d-flex gap-2 mt-3 mt-md-0">
+      <a href="{% url 'dashboard' %}" class="btn btn-talent-secondary btn-sm px-3">
+        <i data-lucide="layout-dashboard" style="width: 16px; height: 16px;"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="{% url 'resume_upload' %}" class="btn btn-talent-primary btn-sm px-3">
+        <i data-lucide="upload-cloud" style="width: 16px; height: 16px;"></i>
+        <span>Screen New Resumes</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Analytical Summary Metrics -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="glass-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-secondary-light small mb-1">Total Resumes Processed</div>
+            <h2 class="h3 text-white fw-bold mb-0 font-monospace">104</h2>
+          </div>
+          <div class="p-2 rounded bg-dark border border-secondary text-cyan">
+            <i data-lucide="file-check" style="width: 20px; height: 20px;"></i>
+          </div>
+        </div>
+        <div class="mt-3 pt-2 border-top border-secondary small text-success d-flex align-items-center gap-1">
+          <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+          <span>+28% throughput this month</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="glass-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-secondary-light small mb-1">Median Screening Time</div>
+            <h2 class="h3 text-white fw-bold mb-0 font-monospace">1.4s</h2>
+          </div>
+          <div class="p-2 rounded bg-dark border border-secondary text-cyan">
+            <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+          </div>
+        </div>
+        <div class="mt-3 pt-2 border-top border-secondary small text-cyan d-flex align-items-center gap-1">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+          <span>High-concurrency streaming parser</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="glass-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-secondary-light small mb-1">Top-Tier Conversion</div>
+            <h2 class="h3 text-white fw-bold mb-0 font-monospace">38.4%</h2>
+          </div>
+          <div class="p-2 rounded bg-dark border border-secondary text-success">
+            <i data-lucide="award" style="width: 20px; height: 20px;"></i>
+          </div>
+        </div>
+        <div class="mt-3 pt-2 border-top border-secondary small text-secondary-light d-flex align-items-center gap-1">
+          <i data-lucide="shield-check" class="text-success" style="width: 14px; height: 14px;"></i>
+          <span>Scored &ge; 80% match benchmark</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="glass-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-secondary-light small mb-1">Extracted Skill Density</div>
+            <h2 class="h3 text-white fw-bold mb-0 font-monospace">14.2</h2>
+          </div>
+          <div class="p-2 rounded bg-dark border border-secondary text-warning">
+            <i data-lucide="tag" style="width: 20px; height: 20px;"></i>
+          </div>
+        </div>
+        <div class="mt-3 pt-2 border-top border-secondary small text-secondary-light d-flex align-items-center gap-1">
+          <i data-lucide="layers" class="text-warning" style="width: 14px; height: 14px;"></i>
+          <span>Average skills per candidate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="card-title-flow mb-2">
+          <i data-lucide="bar-chart-2" class="text-cyan" style="width: 20px; height: 20px;"></i>
+          <h2 class="h5 text-white fw-bold mb-0">Top Technical Competencies in Talent Pool</h2>
+        </div>
+        <p class="text-secondary-light small mb-3">Extracted skills ranked by prevalence across verified candidate resumes.</p>
+        <div style="position: relative; height: 280px; width: 100%;">
+          <canvas id="skillsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="card-title-flow mb-2">
+          <i data-lucide="trending-up" class="text-cyan" style="width: 20px; height: 20px;"></i>
+          <h2 class="h5 text-white fw-bold mb-0">Screening Velocity Trajectory</h2>
+        </div>
+        <p class="text-secondary-light small mb-3">Weekly resume volume ingestion and automated evaluation counts.</p>
+        <div style="position: relative; height: 280px; width: 100%;">
+          <canvas id="evalChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // 1. Top Skills Chart
+    const skillsCtx = document.getElementById('skillsChart');
+    if (skillsCtx) {
+      new Chart(skillsCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Python', 'Django', 'PostgreSQL', 'Docker', 'React', 'AWS', 'Git', 'FastAPI'],
+          datasets: [{
+            label: 'Candidates',
+            data: [42, 36, 31, 28, 24, 21, 38, 19],
+            backgroundColor: '#0284C7',
+            hoverBackgroundColor: '#38BDF8',
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { 
+              grid: { color: '#1E2D4A' }, 
+              ticks: { color: '#94A3B8', font: { family: "'IBM Plex Sans', sans-serif" } } 
+            },
+            x: { 
+              grid: { display: false }, 
+              ticks: { color: '#CBD5E1', font: { family: "'IBM Plex Sans', sans-serif" } } 
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // 2. Evaluation Velocity Chart
+    const evalCtx = document.getElementById('evalChart');
+    if (evalCtx) {
+      new Chart(evalCtx, {
+        type: 'line',
+        data: {
+          labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+          datasets: [{
+            label: 'Resumes Evaluated',
+            data: [14, 22, 35, 48, 72, 104],
+            borderColor: '#38BDF8',
+            backgroundColor: 'rgba(56, 189, 248, 0.12)',
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#38BDF8',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { 
+              grid: { color: '#1E2D4A' }, 
+              ticks: { color: '#94A3B8', font: { family: "'IBM Plex Sans', sans-serif" } } 
+            },
+            x: { 
+              grid: { display: false }, 
+              ticks: { color: '#CBD5E1', font: { family: "'IBM Plex Sans', sans-serif" } } 
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#CBD5E1', font: { family: "'IBM Plex Sans', sans-serif" } }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

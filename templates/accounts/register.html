@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Recruiter Account – TalentIQ{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="glass-card p-4 p-md-5">
+        <div class="text-center mb-4">
+          <div class="d-inline-flex align-items-center gap-2 mb-2">
+            <i data-lucide="cpu" class="text-cyan" style="width: 28px; height: 28px;"></i>
+            <span class="fs-4 fw-bold text-white tracking-tight">Talent<span class="brand-accent">IQ</span></span>
+          </div>
+          <h1 class="h4 text-white fw-bold mb-1">Create Recruiter Account</h1>
+          <p class="text-secondary-light small mb-0">Set up your enterprise workspace and recruiter profile</p>
+        </div>
+
+        <form method="post" action="{% url 'register' %}">
+          {% csrf_token %}
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="regFirstName">First Name</label>
+              <input type="text" id="regFirstName" name="first_name" class="form-control" required placeholder="Alex" autocomplete="given-name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-secondary-light small fw-medium" for="regLastName">Last Name</label>
+              <input type="text" id="regLastName" name="last_name" class="form-control" required placeholder="Morgan" autocomplete="family-name">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="regOrgName">Organization / Company Name</label>
+            <input type="text" id="regOrgName" name="organization_name" class="form-control" required placeholder="Apex Technologies Inc." autocomplete="organization">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-secondary-light small fw-medium" for="regEmail">Work Email</label>
+            <input type="email" id="regEmail" name="email" class="form-control" required placeholder="alex@apex.com" autocomplete="email">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-secondary-light small fw-medium" for="regPasswordInput">Password</label>
+            <div class="position-relative">
+              <input type="password" id="regPasswordInput" name="password" class="form-control pe-5" required minlength="8" placeholder="Minimum 8 characters" autocomplete="new-password">
+              <button type="button" class="btn btn-sm text-secondary-light position-absolute end-0 top-50 translate-middle-y me-2 border-0 bg-transparent p-1" id="toggleRegPasswordBtn" aria-label="Toggle password visibility">
+                <i data-lucide="eye" id="regPasswordEyeIcon" style="width: 18px; height: 18px;"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-talent-primary w-100 justify-content-center py-2 mb-3">
+            Create Enterprise Account
+          </button>
+        </form>
+
+        <div class="text-center mt-3 border-top border-secondary pt-3">
+          <p class="text-secondary-light small mb-0">Already registered? <a href="{% url 'login' %}" class="text-cyan text-decoration-none fw-medium hover-cyan">Sign In</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const regPasswordInput = document.getElementById('regPasswordInput');
+    const toggleRegBtn = document.getElementById('toggleRegPasswordBtn');
+    const regEyeIcon = document.getElementById('regPasswordEyeIcon');
+
+    if (toggleRegBtn && regPasswordInput) {
+      toggleRegBtn.addEventListener('click', function () {
+        const isPassword = regPasswordInput.getAttribute('type') === 'password';
+        regPasswordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        
+        if (isPassword) {
+          regEyeIcon.setAttribute('data-lucide', 'eye-off');
+        } else {
+          regEyeIcon.setAttribute('data-lucide', 'eye');
+        }
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

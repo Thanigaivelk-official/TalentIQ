@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Candidate Ranking & Intelligence – {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-5 py-4">
+  <!-- Top Navigation & Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+    <div>
+      <a href="{% url 'job_list' %}" class="text-secondary-light small text-decoration-none hover-cyan mb-1 d-inline-block">&larr; Back to Job Requisitions</a>
+      <h1 class="h3 text-white fw-bold mb-1 mt-1">{{ job.title }} &bull; Candidate Ranking</h1>
+      <p class="text-secondary-light small mb-0">
+        {{ job.department }} &bull; Min <span class="font-monospace text-white">{{ job.min_years_experience }} yrs</span> experience &bull; <span class="font-monospace text-white">{{ analyses.count }}</span> Applicants Screened
+      </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2 mt-3 mt-md-0">
+      <a href="{% url 'generate_interview_questions' job.id %}" class="btn btn-talent-secondary btn-sm px-3">
+        <i data-lucide="help-circle" style="width: 16px; height: 16px;"></i>
+        <span>Generate Questions</span>
+      </a>
+      <a href="{% url 'resume_upload' %}?job_id={{ job.id }}" class="btn btn-talent-primary btn-sm px-3">
+        <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
+        <span>Upload More Resumes</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Interactive Search & Filtering Bar -->
+  <div class="glass-card p-3 mb-4">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-5">
+        <div class="position-relative">
+          <input type="text" id="candidateSearchInput" class="form-control ps-4" placeholder="Filter by candidate name, email, or skill...">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <select id="scoreFilterSelect" class="form-select">
+          <option value="all">All Match Tiers</option>
+          <option value="high">Top Match (80% - 100%)</option>
+          <option value="mid">Moderate Match (60% - 79%)</option>
+          <option value="low">Low Match (&lt; 60%)</option>
+        </select>
+      </div>
+      <div class="col-md-4 text-md-end text-secondary-light small">
+        Scoring Model: <span class="badge bg-dark border border-secondary text-cyan font-monospace">Deterministic Weighted (v1.0)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rankings Table -->
+  <div class="glass-card p-4">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover border-secondary align-middle mb-0" id="rankingTable">
+        <thead class="text-secondary-light small border-bottom border-secondary">
+          <tr>
+            <th scope="col" class="py-3">Rank</th>
+            <th scope="col" class="py-3">Candidate</th>
+            <th scope="col" class="py-3">Overall Match</th>
+            <th scope="col" class="py-3">Tech Skills</th>
+            <th scope="col" class="py-3">Experience</th>
+            <th scope="col" class="py-3">Matched Skills</th>
+            <th scope="col" class="py-3">Skill Gaps</th>
+            <th scope="col" class="py-3 text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for analysis in analyses %}
+            <tr class="candidate-row" 
+                data-name="{{ analysis.candidate.first_name }} {{ analysis.candidate.last_name }}" 
+                data-email="{{ analysis.candidate.email }}" 
+                data-score="{{ analysis.overall_score }}"
+                data-skills="{% for s in analysis.matched_skills %}{{ s }} {% endfor %}">
+              <td class="fw-bold font-monospace text-secondary-light py-3">#{{ forloop.counter }}</td>
+              <td class="py-3">
+                <div class="fw-semibold text-white">{{ analysis.candidate.first_name }} {{ analysis.candidate.last_name }}</div>
+                <div class="text-secondary-light small">{{ analysis.candidate.email }}</div>
+              </td>
+              <td class="py-3">
+                <span class="badge-score font-monospace {% if analysis.overall_score >= 80 %}score-high{% elif analysis.overall_score >= 60 %}score-mid{% else %}score-low{% endif %}">
+                  {{ analysis.overall_score }}%
+                </span>
+              </td>
+              <td class="py-3"><span class="text-white font-monospace">{{ analysis.technical_skill_score }}%</span></td>
+              <td class="py-3"><span class="text-white font-monospace">{{ analysis.experience_score }}%</span></td>
+              <td class="py-3">
+                <div class="d-flex flex-wrap gap-1" style="max-width: 260px;">
+                  {% for s in analysis.matched_skills %}
+                    <span class="badge-skill">{{ s }}</span>
+                  {% empty %}
+                    <span class="text-secondary-light small">None detected</span>
+                  {% endfor %}
+                </div>
+              </td>
+              <td class="py-3">
+                <div class="d-flex flex-wrap gap-1" style="max-width: 220px;">
+                  {% for s in analysis.missing_skills %}
+                    <span class="badge-missing">{{ s }}</span>
+                  {% empty %}
+                    <span class="text-success small fw-medium">No critical gaps</span>
+                  {% endfor %}
+                </div>
+              </td>
+              <td class="py-3 text-end">
+                <div class="d-flex align-items-center justify-content-end gap-2">
+                  <a href="{% url 'candidate_detail' analysis.id %}" class="btn btn-talent-primary btn-sm py-1 px-3">
+                    Evaluation &rarr;
+                  </a>
+                  {% if analysis.resume.file %}
+                    <a href="{% url 'resume_download' analysis.resume.id %}" class="btn btn-talent-secondary btn-sm py-1 px-2" title="Download Candidate Resume">
+                      <i data-lucide="download" style="width: 15px; height: 15px;"></i>
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" class="text-center py-5 text-secondary-light">
+                No candidate evaluations for this job opening yet. Upload candidate resumes to generate AI ranking.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('candidateSearchInput');
+    const filterSelect = document.getElementById('scoreFilterSelect');
+    const rows = document.querySelectorAll('.candidate-row');
+
+    function applyFilters() {
+      const query = (searchInput.value || '').toLowerCase().trim();
+      const tier = filterSelect.value;
+
+      rows.forEach(row => {
+        const name = (row.getAttribute('data-name') || '').toLowerCase();
+        const email = (row.getAttribute('data-email') || '').toLowerCase();
+        const skills = (row.getAttribute('data-skills') || '').toLowerCase();
+        const score = parseFloat(row.getAttribute('data-score') || '0');
+
+        const matchesQuery = !query || name.includes(query) || email.includes(query) || skills.includes(query);
+        let matchesTier = true;
+        if (tier === 'high') matchesTier = score >= 80;
+        else if (tier === 'mid') matchesTier = score >= 60 && score < 80;
+        else if (tier === 'low') matchesTier = score < 60;
+
+        if (matchesQuery && matchesTier) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (filterSelect) filterSelect.addEventListener('change', applyFilters);
+  });
+</script>
+{% endblock %}

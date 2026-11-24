@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Recruiter Profile – TalentIQ{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <!-- Top Title -->
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+        <div>
+          <a href="{% url 'dashboard' %}" class="text-secondary-light small text-decoration-none hover-cyan">&larr; Back to Dashboard</a>
+          <h1 class="h3 text-white fw-bold mb-1 mt-1">Recruiter Profile &amp; Settings</h1>
+          <p class="text-secondary-light small mb-0">Manage your recruiter identity, profile photo, and enterprise workspace</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="status-indicator"></span>
+          <span class="text-cyan small fw-semibold font-monospace">{{ user.get_role_display }}</span>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Profile Identity & Avatar Card -->
+        <div class="col-md-4">
+          <div class="glass-card p-4 text-center h-100">
+            <div class="position-relative d-inline-block mb-3">
+              {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="{{ user.get_full_name|default:user.email }}" class="rounded-circle border border-secondary object-fit-cover shadow-sm" style="width: 108px; height: 108px;">
+              {% else %}
+                <div class="rounded-circle bg-dark border border-secondary d-inline-flex align-items-center justify-content-center text-cyan shadow-sm" style="width: 108px; height: 108px;">
+                  <i data-lucide="user-check" style="width: 48px; height: 48px;"></i>
+                </div>
+              {% endif %}
+            </div>
+
+            <h2 class="h5 text-white fw-bold mb-1">{{ user.get_full_name|default:user.email }}</h2>
+            <p class="text-secondary-light small mb-3">{{ profile.title|default:"Talent Acquisition Specialist" }}</p>
+            
+            <div class="border-top border-secondary pt-3 text-start small">
+              <div class="text-secondary-light mb-1">Organization:</div>
+              <div class="text-white fw-semibold mb-3">{{ user.organization.name|default:"Apex Global Technologies" }}</div>
+
+              <div class="text-secondary-light mb-1">Department:</div>
+              <div class="text-white fw-semibold mb-3">{{ profile.department|default:"Human Resources" }}</div>
+
+              <div class="text-secondary-light mb-1">Account Role:</div>
+              <div class="text-cyan fw-semibold mb-3">{{ user.get_role_display }}</div>
+
+              <div class="text-secondary-light mb-1">Member Since:</div>
+              <div class="text-white font-monospace">{{ user.date_joined|date:"M d, Y" }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editable Profile & Photo Form -->
+        <div class="col-md-8">
+          <div class="glass-card p-4 p-md-5 h-100">
+            <h2 class="h5 text-white fw-bold mb-3">Edit Professional Information</h2>
+
+            <form method="post" enctype="multipart/form-data" action="{% url 'recruiter_profile' %}">
+              {% csrf_token %}
+              
+              <!-- Profile Photo File Upload Field -->
+              <div class="mb-4 p-3 rounded bg-dark border border-secondary">
+                <label class="form-label text-secondary-light small fw-medium mb-1" for="avatarInput">Profile Picture / Avatar</label>
+                <input type="file" id="avatarInput" name="avatar" class="form-control" accept="image/png, image/jpeg, image/webp">
+                <div class="form-text text-secondary-light small mt-1">Upload a professional headshot (JPG, PNG, or WEBP max 5MB).</div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary-light small fw-medium" for="firstName">First Name</label>
+                  <input type="text" id="firstName" name="first_name" class="form-control" value="{{ user.first_name }}" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary-light small fw-medium" for="lastName">Last Name</label>
+                  <input type="text" id="lastName" name="last_name" class="form-control" value="{{ user.last_name }}" required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-secondary-light small fw-medium" for="email">Work Email</label>
+                <input type="email" id="email" class="form-control bg-dark" value="{{ user.email }}" disabled>
+                <div class="form-text text-secondary-light small">Managed by enterprise organization admin.</div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary-light small fw-medium" for="jobTitle">Job Title</label>
+                  <input type="text" id="jobTitle" name="title" class="form-control" value="{{ profile.title }}" placeholder="e.g. Senior Technical Recruiter">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary-light small fw-medium" for="department">Department</label>
+                  <input type="text" id="department" name="department" class="form-control" value="{{ profile.department }}" placeholder="e.g. Engineering Hiring">
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label text-secondary-light small fw-medium" for="bio">Professional Bio</label>
+                <textarea id="bio" name="bio" rows="3" class="form-control" placeholder="Specializing in distributed systems, AI/ML talent acquisition, and engineering scaling...">{{ profile.bio }}</textarea>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'dashboard' %}" class="btn btn-talent-secondary">Cancel</a>
+                <button type="submit" class="btn btn-talent-primary">
+                  <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                  <span>Save Profile</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
