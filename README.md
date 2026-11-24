@@ -78,6 +78,35 @@ For quick evaluation and testing across roles, use the following pre-configured 
 
 ---
 
+## 🚀 One-Click Render Deployment
+
+TalentIQ is fully pre-configured for automated continuous deployment on [Render](https://render.com) using Infrastructure-as-Code (`render.yaml`).
+
+### Option 1: Render Blueprint (Recommended)
+1. Go to [Render Dashboard](https://dashboard.render.com/).
+2. Click **New +** → **Blueprint**.
+3. Select your GitHub repository: `Thanigaivelk-official/TalentIQ`.
+4. Render will automatically detect `render.yaml` and provision:
+   - **PostgreSQL Database** (`talentiq-db`, Free Tier).
+   - **Python Web Service** (`talentiq`, running Gunicorn + WhiteNoise on Python 3.12).
+5. Click **Apply**. Render will run `./build.sh` (installs packages, collects static files, executes migrations, and seeds demo recruiter accounts) and launch the live site.
+
+### Option 2: Manual Web Service Setup
+If deploying without Blueprint:
+- **Environment**: `Python 3`
+- **Build Command**: `./build.sh`
+- **Start Command**: `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2`
+- **Environment Variables**:
+  - `PYTHON_VERSION`: `3.12.10`
+  - `DJANGO_SETTINGS_MODULE`: `config.settings.production`
+  - `SECRET_KEY`: `<generate-a-secure-random-key>`
+  - `DATABASE_URL`: `<your-render-postgresql-external-or-internal-url>`
+  - `ALLOWED_HOSTS`: `.onrender.com,localhost,127.0.0.1`
+  - `CSRF_TRUSTED_ORIGINS`: `https://*.onrender.com`
+  - `LLM_PROVIDER`: `mock` (or provide `OPENAI_API_KEY` for live OpenAI GPT models)
+
+---
+
 ## 🧪 Automated Testing
 
 Run the automated test suite verifying NLP extraction, matching algorithms, and API endpoints:
